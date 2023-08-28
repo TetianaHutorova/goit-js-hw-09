@@ -12,8 +12,10 @@ const refs = {
   minute: document.querySelector('span[data-minutes]'),
   second: document.querySelector('span[data-seconds]'),
 };
-refs.btnStart.setAttribute('disabled', 'disabled');
-refs.btnClear.setAttribute('disabled', 'disabled');
+
+addAttributeElement(refs.btnStart, 'disabled', 'disabled');
+addAttributeElement(refs.btnClear, 'disabled', 'disabled');
+
 refs.btnStart.addEventListener('click', handlerCountingTime);
 refs.btnClear.addEventListener('click', handlerResetSettings);
 
@@ -28,12 +30,11 @@ const options = {
   onClose(selectedDates) {
     if (selectedDates[0] < new Date()) {
       Notiflix.Notify.failure(
-        'Please choose a date in the future',
-        function cb() {}
+        'Please choose a date in the future'
       );
     } else {
       differentInTime = selectedDates[0] - new Date();
-      refs.btnStart.removeAttribute('disabled');
+      deleteAttributeElement(refs.btnStart, 'disabled');
     }
   },
 };
@@ -41,15 +42,15 @@ const options = {
 flatpickr(refs.timerChoise, options);
 
 function handlerCountingTime() {
-  refs.btnStart.setAttribute('disabled', 'disabled');
-  refs.btnClear.removeAttribute('disabled');
-  refs.timerChoise.setAttribute('disabled', 'disabled');
+  addAttributeElement(refs.btnStart, 'disabled', 'disabled');
+  addAttributeElement(refs.timerChoise, 'disabled', 'disabled');
+  deleteAttributeElement(refs.btnClear, 'disabled');
 
-  setTimeout(() => valueAssignment(differentInTime),0);
+  setTimeout(() => valueAssignment(differentInTime), 0);
   idTime = setInterval(() => {
     if (differentInTime < 1000) {
       clearInterval(idTime);
-      refs.btnClear.setAttribute('disabled', 'disabled');
+      addAttributeElement(refs.btnClear, 'disabled', 'disabled');
     }
     valueAssignment(differentInTime);
   }, 1000);
@@ -66,12 +67,21 @@ function valueAssignment(value) {
 
 function handlerResetSettings() {
   clearInterval(idTime);
-  refs.btnStart.removeAttribute('disabled');
-  refs.timerChoise.removeAttribute('disabled');
-  refs.btnClear.setAttribute('disabled', 'disabled');
-  valueAssignment("");
+  deleteAttributeElement(refs.btnStart, 'disabled');
+  deleteAttributeElement(refs.timerChoise, 'disabled');
+  addAttributeElement(refs.btnClear, 'disabled', 'disabled');
+
+  valueAssignment('');
 }
 
 function addLeadingZero(value) {
   return value.toString().padStart(2, 0);
+}
+
+function addAttributeElement(element, attribute, value) {
+  return element.setAttribute(attribute, value);
+}
+
+function deleteAttributeElement(element, attribute) {
+  element.removeAttribute(attribute);
 }
